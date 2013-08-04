@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script type="x-shader/x-vertex" id="v-shader">
+    <script type="x-shader/x-vertex" id="v-shader_orig">
       precision mediump float;
       attribute vec3 vertex;
       attribute vec2 vTextureCoord;
@@ -14,6 +14,19 @@
         vTexCoord = vTextureCoord;
       }
     </script>
+    <script type="x-shader/x-vertex" id="v-shader">
+      precision mediump float;
+      attribute vec3 vertex;
+      attribute vec2 vTextureCoord;
+      uniform vec3 position;
+      uniform vec3 scale;
+      uniform mat4 projectionMatrix;
+      varying vec2 vTexCoord;
+      void main() {
+        gl_Position = vec4(vertex * scale + position, 1.0);
+        vTexCoord = vTextureCoord;
+      }
+    </script>
     <script type="x-shader/x-fragment" id="f-shader">
       precision mediump float;
       varying vec2 vTexCoord;
@@ -21,7 +34,8 @@
       uniform float alpha;
       float gray_color;
       void main() {
-        gl_FragColor = texture2D(tex, vec2(vTexCoord.s, vTexCoord.t)) * vec4(1.0, 1.0, 1.0, alpha);
+        //gl_FragColor = texture2D(tex, vec2(vTexCoord.s, vTexCoord.t)) * vec4(1.0, 1.0, 1.0, alpha);
+        gl_FragColor = vec4(1.0, 1.0, 1.0, alpha);
       }
     </script>
     <script src="triangle.jsx.js"></script>

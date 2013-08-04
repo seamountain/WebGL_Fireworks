@@ -30,8 +30,8 @@ class _Main {
     gl.linkProgram(prog);
     gl.useProgram(prog);
 
-    var projectionMatrix = M44.frustum(-0.8, 0.8, -0.8, 0.8, 7, 1000);
-    gl.uniformMatrix4fv(gl.getUniformLocation(prog, 'projectionMatrix'), false, projectionMatrix.array());
+    //var projectionMatrix = M44.frustum(-0.8, 0.8, -0.8, 0.8, 7, 1000);
+    //gl.uniformMatrix4fv(gl.getUniformLocation(prog, 'projectionMatrix'), false, projectionMatrix.array());
 
     var vertexBuf = gl.createBuffer();
     // bufferをアクティブにする
@@ -73,7 +73,8 @@ class _Main {
       weight.push(0.5 - Math.random() * 2);
       origPosition.push(
           //zが変なことに…
-          [1 - Math.random() * 2, 4 - Math.random() * 3, -4 - Math.random() * 5]
+          //[1 - Math.random() * 2, 4 - Math.random() * 3, -4 - Math.random() * 5]
+          [0, 0, 0]
           );
     }
 
@@ -84,8 +85,10 @@ class _Main {
     function update() : void {
       Timer.setTimeout(update, 1000 / UPDATE_FPS);
       for (var i = 0; i < positions.length; i++) {
-        positions[i][0] += (0.5 - Math.random() * 1) / 300;
-        positions[i][1] -= 0.01 + weight[i] / 100;
+        //positions[i][0] += (0.5 - Math.random() * 1) / 300;
+        //positions[i][1] -= 0.01 + weight[i] / 100;
+        positions[i][0] += 0.0006;
+        positions[i][1] += 0.01 + weight[i] / 100;
         //positions[i][0] += 0.01;
         //positions[i][1] += 0.01;
       }
@@ -125,37 +128,53 @@ class _Main {
 
     function render(f:number) : void {
       Timer.requestAnimationFrame(render);
-      gl.clear(gl.COLOR_BUFFER_BIT);
-      gl.enable(gl.BLEND);
-      //gl.enable(gl.DEPTH_TEST);
-      gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE);
+      //gl.clear(gl.COLOR_BUFFER_BIT);
+      //gl.enable(gl.BLEND);
+      ////gl.enable(gl.DEPTH_TEST);
+      //gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE);
 
-      //カメラ
-      //function pot_ge(n:number):number{var r=1; while(r<n)r*=2; return r;}
-      //var texSizeX = pot_ge(1000);
-      //var texSizeY = pot_ge(1000);
-      //gl.bindTexture(gl.TEXTURE_2D, cameraTex);
-      //gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, texSizeX, texSizeY, 0, gl.RGB, gl.UNSIGNED_BYTE, null);
-      //gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGB, gl.UNSIGNED_BYTE, video);
-      //gl.generateMipmap(gl.TEXTURE_2D);
-      //gl.uniform3f(positionLoc, 25, 53, -400);
-      //gl.uniform3fv(scaleLoc, new Float32Array([100, 100, 100]));
-      //gl.uniform1f(alphaLoc, 1.0);
-      //gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      ////カメラ
+      ////function pot_ge(n:number):number{var r=1; while(r<n)r*=2; return r;}
+      ////var texSizeX = pot_ge(1000);
+      ////var texSizeY = pot_ge(1000);
+      ////gl.bindTexture(gl.TEXTURE_2D, cameraTex);
+      ////gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, texSizeX, texSizeY, 0, gl.RGB, gl.UNSIGNED_BYTE, null);
+      ////gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGB, gl.UNSIGNED_BYTE, video);
+      ////gl.generateMipmap(gl.TEXTURE_2D);
+      ////gl.uniform3f(positionLoc, 25, 53, -400);
+      ////gl.uniform3fv(scaleLoc, new Float32Array([100, 100, 100]));
+      ////gl.uniform1f(alphaLoc, 1.0);
+      ////gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
-      //雪
+      ////雪
       scale = 0.02;
+      //scale = 1;
       gl.uniform3fv(scaleLoc, new Float32Array([scale, scale, scale]));
       gl.bindTexture(gl.TEXTURE_2D, texture);
-      for (var i = 0; i < positions.length; i++) {
-        gl.uniform3f(positionLoc, positions[i][0], positions[i][1], positions[i][2]);
-        gl.uniform1f(alphaLoc, 0.3);
+      //for (var i = 0; i < positions.length; i++) {
+        //gl.uniform3f(positionLoc, positions[i][0], positions[i][1], positions[i][2]);
+        //gl.uniform1f(alphaLoc, 0.3);
 
-        //scale = 0.01;
-        //scale += positions[i][2] / positions[i][2] / 100;
-        //gl.uniform3fv(scaleLoc, new Float32Array([scale, scale, scale]));
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-      }
+        ////scale = 0.01;
+        ////scale += positions[i][2] / positions[i][2] / 100;
+        ////gl.uniform3fv(scaleLoc, new Float32Array([scale, scale, scale]));
+        //gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      //}
+
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      var varray = new Float32Array([
+          // (1)
+          -1,  1,  1, // 左上の頂点 (x :  左右, y : 上下, z : 手前億) - 図を見ながら座標をうつとよい
+          -1, -1,  1, // 左下の頂点
+          1,  1,  1, // 以下略
+          1, -1,  1
+          ]);
+      var vbuf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, vbuf);
+      gl.bufferData(gl.ARRAY_BUFFER, varray, gl.STATIC_DRAW);
+      gl.vertexAttribPointer(0 /* attrib index */, 3, gl.FLOAT, false, 0, 0);
+      gl.enableVertexAttribArray(0);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
 
 
