@@ -1,0 +1,3 @@
+[submodule "mvq.jsx"]
+	path = mvq.jsx
+	url = git://github.com/thaga/mvq.jsx.git

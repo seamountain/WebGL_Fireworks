@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="x-shader/x-vertex" id="v-shader">
+      precision mediump float;
+      attribute vec3 vertex;
+      attribute vec2 vTextureCoord;
+      uniform vec3 position;
+      uniform vec3 scale;
+      uniform mat4 projectionMatrix;
+      varying vec2 vTexCoord;
+      void main() {
+        gl_Position = projectionMatrix * vec4(vertex * scale + position, 1.0);
+        vTexCoord = vTextureCoord;
+      }
+    </script>
+    <script type="x-shader/x-fragment" id="f-shader">
+      precision mediump float;
+      varying vec2 vTexCoord;
+      uniform sampler2D tex;
+      uniform float alpha;
+      float gray_color;
+      void main() {
+        gl_FragColor = texture2D(tex, vec2(vTexCoord.s, vTexCoord.t)) * vec4(1.0, 1.0, 1.0, alpha);
+      }
+    </script>
+    <script src="triangle.jsx.js"></script>
+  <body style="background-color: gray">
+   <!--<video id="v" autoplay="ture" controls="true" style="display:none"></video>-->
+   <canvas id="world" width="700" height="700" style="background-color: gray"/>
+  </body>
+</html>
+
