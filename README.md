@@ -1,7 +1,4 @@
-# Snowy!
-- This project is for training WebGL.
-- I want to see much snow!
-
+# Fireworks!
 # Usage
 1. install Node.js
 2. install JSX
