@@ -34,13 +34,12 @@
       uniform float alpha;
       float gray_color;
       void main() {
-        //gl_FragColor = texture2D(tex, vec2(vTexCoord.s, vTexCoord.t)) * vec4(1.0, 1.0, 1.0, alpha);
-        gl_FragColor = vec4(1.0, 1.0, 1.0, alpha);
+        gl_FragColor = texture2D(tex, vec2(vTexCoord.s, vTexCoord.t)) * vec4(1.0, 1.0, 1.0, alpha);
+        //gl_FragColor = vec4(1.0, 1.0, 1.0, alpha);
       }
     </script>
     <script src="triangle.jsx.js"></script>
   <body style="background-color: gray">
-   <!--<video id="v" autoplay="ture" controls="true" style="display:none"></video>-->
    <canvas id="world" width="700" height="700" style="background-color: gray"/>
   </body>
 </html>
