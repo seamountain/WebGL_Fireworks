@@ -69,28 +69,63 @@ class _Main {
     //大量の雪データ作成
     var weight = [0.1];
     var origPosition = [[0.5, 0.5, 0.5]];
-    for (var i = 0; i < 3000; i++) {
+    for (var i = 0; i < 30; i++) {
       weight.push(0.5 - Math.random() * 2);
       origPosition.push(
           //zが変なことに…
           //[1 - Math.random() * 2, 4 - Math.random() * 3, -4 - Math.random() * 5]
-          [0, 0, 0]
+          //x, y, vx, vy
+          //[0, 0, 0, 0.0002, 0.02 - Math.random() / 100]
+          //[0, 0, 0, 0.01 - Math.random() / 100, 0.05 - Math.random() / 10]
+          [0, 0, 0, 0.01 * Math.random(), 0.01 * Math.random()]
+          //[0, 0, 0, 0.002, 0.05]
           );
     }
+          log Math.random();
 
 
     // update
     var positions = origPosition;
-    var UPDATE_FPS = 15;
+    var UPDATE_FPS = 50;
+    // 放物線を描かせたい
+    //var g = 9.8;
+    var g = -0.025;
+    var dt = 0.01;
+    var vx = 0;
+    var vy = 0;
+    var v = 0;
+
+    var px = 0; // x座標
+    var py = 0; // y座標
+    //var dx = 2.0; // x方向の速度
+    var dx = 0.02; // x方向の速度
+    //var dy = -1.0; // y方向の速度
+    var dy = 0.05; // y方向の速度
+    var time = 0;
     function update() : void {
       Timer.setTimeout(update, 1000 / UPDATE_FPS);
+      dx = dx;
+      dy += g * time;
+      time++;
       for (var i = 0; i < positions.length; i++) {
-        //positions[i][0] += (0.5 - Math.random() * 1) / 300;
-        //positions[i][1] -= 0.01 + weight[i] / 100;
-        positions[i][0] += 0.0006;
-        positions[i][1] += 0.01 + weight[i] / 100;
-        //positions[i][0] += 0.01;
-        //positions[i][1] += 0.01;
+        //////positions[i][0] += (0.5 - Math.random() * 1) / 300;
+        //////positions[i][1] -= 0.01 + weight[i] / 100;
+        //////positions[i][0] += 0.0006;
+        //////positions[i][1] += 0.01 + weight[i] / 100;
+        ////positions[i][0] += vx * dt; // x
+        ////positions[i][1] += vy * dt; // y
+        ////vx = vx - g * dt - v * vy * dt;
+        //////vy -= g * dt;
+        ////vy = vy - g * dt * vy * dt;
+        ////positions[i][0] = px;
+        ////positions[i][1] = py;
+        ////positions[i][0] = 0;
+        ////positions[i][1] = 0;
+        //log("-----------------------");
+        positions[i][3] = positions[i][3]; //vx
+        positions[i][4] += g * time / 1000; //vy
+        positions[i][0] += positions[i][3];
+        positions[i][1] += positions[i][4];
       }
     }
 
@@ -151,30 +186,31 @@ class _Main {
       //scale = 1;
       gl.uniform3fv(scaleLoc, new Float32Array([scale, scale, scale]));
       gl.bindTexture(gl.TEXTURE_2D, texture);
-      //for (var i = 0; i < positions.length; i++) {
-        //gl.uniform3f(positionLoc, positions[i][0], positions[i][1], positions[i][2]);
-        //gl.uniform1f(alphaLoc, 0.3);
+      for (var i = 0; i < positions.length; i++) {
+        gl.uniform3f(positionLoc, positions[i][0], positions[i][1], positions[i][2]);
+        gl.uniform1f(alphaLoc, 0.3);
 
+        // ただの四角
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        var varray = new Float32Array([
+            // (1)
+            -1,  1,  1, // 左上の頂点 (x :  左右, y : 上下, z : 手前億) - 図を見ながら座標をうつとよい
+            -1, -1,  1, // 左下の頂点
+            1,  1,  1, // 以下略
+            1, -1,  1
+            ]);
+        var vbuf = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, vbuf);
+        gl.bufferData(gl.ARRAY_BUFFER, varray, gl.STATIC_DRAW);
+        gl.vertexAttribPointer(0 /* attrib index */, 3, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(0);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         ////scale = 0.01;
         ////scale += positions[i][2] / positions[i][2] / 100;
         ////gl.uniform3fv(scaleLoc, new Float32Array([scale, scale, scale]));
-        //gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-      //}
+        //gl.drawArrays(gl.TRIANGLE_STRIP, 1, 4);
+      }
 
-      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-      var varray = new Float32Array([
-          // (1)
-          -1,  1,  1, // 左上の頂点 (x :  左右, y : 上下, z : 手前億) - 図を見ながら座標をうつとよい
-          -1, -1,  1, // 左下の頂点
-          1,  1,  1, // 以下略
-          1, -1,  1
-          ]);
-      var vbuf = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, vbuf);
-      gl.bufferData(gl.ARRAY_BUFFER, varray, gl.STATIC_DRAW);
-      gl.vertexAttribPointer(0 /* attrib index */, 3, gl.FLOAT, false, 0, 0);
-      gl.enableVertexAttribArray(0);
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
 
 
