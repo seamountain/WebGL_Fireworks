@@ -123,7 +123,7 @@ class _Main {
         ////positions[i][1] = 0;
         //log("-----------------------");
         positions[i][3] = positions[i][3]; //vx
-        positions[i][4] += g * time / 1000; //vy
+        positions[i][4] += g * time / 10000; //vy
         positions[i][0] += positions[i][3];
         positions[i][1] += positions[i][4];
       }
@@ -186,29 +186,31 @@ class _Main {
       //scale = 1;
       gl.uniform3fv(scaleLoc, new Float32Array([scale, scale, scale]));
       gl.bindTexture(gl.TEXTURE_2D, texture);
-      for (var i = 0; i < positions.length; i++) {
-        gl.uniform3f(positionLoc, positions[i][0], positions[i][1], positions[i][2]);
-        gl.uniform1f(alphaLoc, 0.3);
 
-        // ただの四角
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        var varray = new Float32Array([
-            // (1)
-            -1,  1,  1, // 左上の頂点 (x :  左右, y : 上下, z : 手前億) - 図を見ながら座標をうつとよい
-            -1, -1,  1, // 左下の頂点
-            1,  1,  1, // 以下略
-            1, -1,  1
-            ]);
-        var vbuf = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, vbuf);
-        gl.bufferData(gl.ARRAY_BUFFER, varray, gl.STATIC_DRAW);
-        gl.vertexAttribPointer(0 /* attrib index */, 3, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(0);
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      // ただの四角
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      var varray = new Float32Array([
+          // (1)
+          -1,  1,  1, // 左上の頂点 (x :  左右, y : 上下, z : 手前億) - 図を見ながら座標をうつとよい
+          -1, -1,  1, // 左下の頂点
+          1,  1,  1, // 以下略
+          1, -1,  1
+          ]);
+      var vbuf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, vbuf);
+      gl.bufferData(gl.ARRAY_BUFFER, varray, gl.STATIC_DRAW);
+      gl.vertexAttribPointer(0 /* attrib index */, 3, gl.FLOAT, false, 0, 0);
+      gl.enableVertexAttribArray(0);
+      //gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+      for (var i = 0; i < positions.length; i++) {
         ////scale = 0.01;
         ////scale += positions[i][2] / positions[i][2] / 100;
         ////gl.uniform3fv(scaleLoc, new Float32Array([scale, scale, scale]));
-        //gl.drawArrays(gl.TRIANGLE_STRIP, 1, 4);
+
+        gl.uniform3f(positionLoc, positions[i][0], positions[i][1], positions[i][2]);
+        gl.uniform1f(alphaLoc, 0.3);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       }
 
     }
