@@ -69,10 +69,13 @@ class _Main {
     //大量の雪データ作成
     var weight = [0.1];
     var origPosition = [[0.5, 0.5, 0.5]];
+    var colors = [[1.0, 1.0, 1.0]];
+    var posX = 0.5 - Math.random() * 1.5;
+    var posY = 0.5 - Math.random() * 1.5;
     for (var i = 0; i < 30; i++) {
       weight.push(0.5 - Math.random() * 2);
       origPosition.push(
-          [0, 0, 0, 0.01 * Math.random(), 0.01 * Math.random()]
+          [posX, 0, 0, 0.01 * Math.random(), 0.01 * Math.random()]
           );
     }
 
@@ -111,6 +114,9 @@ class _Main {
     var scale = 1.0;
     gl.uniform3fv(scaleLoc, new Float32Array([scale, scale, scale]));
 
+    var colorLoc = gl.getUniformLocation(prog, 'color');
+    var color = [Math.random(), Math.random(), Math.random()];
+
     function render(f:number) : void {
       Timer.requestAnimationFrame(render);
       gl.clear(gl.COLOR_BUFFER_BIT);
@@ -119,7 +125,7 @@ class _Main {
       gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE);
 
       ////雪
-      scale = 0.02;
+      scale = 0.01;
       //scale = 1;
       gl.uniform3fv(scaleLoc, new Float32Array([scale, scale, scale]));
       gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -140,8 +146,11 @@ class _Main {
       gl.enableVertexAttribArray(0);
 
       for (var i = 0; i < positions.length; i++) {
+        // 色
+        gl.uniform3fv(colorLoc, color);
+        // 位置
         gl.uniform3f(positionLoc, positions[i][0], positions[i][1], positions[i][2]);
-        gl.uniform1f(alphaLoc, 0.3);
+        gl.uniform1f(alphaLoc, 0.7);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       }
     }

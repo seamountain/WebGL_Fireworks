@@ -32,15 +32,18 @@
       varying vec2 vTexCoord;
       uniform sampler2D tex;
       uniform float alpha;
+      uniform vec3 color;
       float gray_color;
       void main() {
-        gl_FragColor = texture2D(tex, vec2(vTexCoord.s, vTexCoord.t)) * vec4(1.0, 1.0, 1.0, alpha);
+        //gl_FragColor = texture2D(tex, vec2(vTexCoord.s, vTexCoord.t)) * vec4(1.0, 1.0, 1.0, alpha);
+        gl_FragColor = vec4(color, alpha);
         //gl_FragColor = vec4(1.0, 1.0, 1.0, alpha);
       }
     </script>
     <script src="triangle.jsx.js"></script>
-  <body style="background-color: gray">
-   <canvas id="world" width="700" height="700" style="background-color: gray"/>
+  </head>
+  <body style="background-color: black">
+    <canvas id="world" width="700" height="700" style="background-color: black"/>
   </body>
 </html>
 
