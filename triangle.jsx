@@ -85,6 +85,8 @@ class _Main {
     // 放物線を描かせたい
     var g = -0.025;
     var dt = 0;
+    // 関数自体をsetやclearするのではなく、
+    // アップデート関数は回しっぱなしで、登録するデータを入れ替えて表示させる
     function update() : void {
       Timer.setTimeout(update, 1000 / UPDATE_FPS);
       dt++;
@@ -106,7 +108,13 @@ class _Main {
       gl.bindTexture(gl.TEXTURE_2D, texture);
       gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1); // 画像の上下反転
       gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+      gl.generateMipmap(gl.TEXTURE_2D);
+      //以下のtexParameteriが必要。画面の大きさによって必要になる
+      //表示されなかったのはミップマップの仕組みが原因
+      //上記のようにgenerateMipmapを使って、違うレベル(サイズ)のミップマップを生成して、表示させることも出来る
       //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      //こっち使う時は注意！レベル1以外のレベルののtextureが使われると、表示されない！
+      //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     });
     img.src = 'snow.png';
 
