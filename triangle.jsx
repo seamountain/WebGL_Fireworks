@@ -140,25 +140,25 @@ class _Main {
 
       // ただの四角
       //gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-      var varray = new Float32Array([
-          // (1)
-          -1,  1,  1, // 左上の頂点 (x :  左右, y : 上下, z : 手前億) - 図を見ながら座標をうつとよい
-          -1, -1,  1, // 左下の頂点
-          1,  1,  1, // 以下略
-          1, -1,  1
-          ]);
-      var vbuf = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, vbuf);
-      gl.bufferData(gl.ARRAY_BUFFER, varray, gl.STATIC_DRAW);
-      gl.vertexAttribPointer(0 /* attrib index */, 3, gl.FLOAT, false, 0, 0);
-      gl.enableVertexAttribArray(0);
+      //var varray = new Float32Array([
+          //// (1)
+          //-1,  1,  1, // 左上の頂点 (x :  左右, y : 上下, z : 手前億) - 図を見ながら座標をうつとよい
+          //-1, -1,  1, // 左下の頂点
+          //1,  1,  1, // 以下略
+          //1, -1,  1
+          //]);
+      //var vbuf = gl.createBuffer();
+      //gl.bindBuffer(gl.ARRAY_BUFFER, vbuf);
+      //gl.bufferData(gl.ARRAY_BUFFER, varray, gl.STATIC_DRAW);
+      //gl.vertexAttribPointer(0 [> attrib index <], 3, gl.FLOAT, false, 0, 0);
+      //gl.enableVertexAttribArray(0);
 
       for (var i = 0; i < positions.length; i++) {
         // 色
         gl.uniform3fv(colorLoc, color);
         // 位置
         gl.uniform3f(positionLoc, positions[i][0], positions[i][1], positions[i][2]);
-        gl.uniform1f(alphaLoc, 0.7);
+        gl.uniform1f(alphaLoc, 0.95);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       }
     }

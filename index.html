@@ -35,7 +35,7 @@
       uniform vec3 color;
       float gray_color;
       void main() {
-        gl_FragColor = texture2D(tex, vec2(vTexCoord.s, vTexCoord.t)) * vec4(1.0, 1.0, 1.0, alpha);
+        gl_FragColor = texture2D(tex, vec2(vTexCoord.s, vTexCoord.t)) * vec4(color, alpha);
         //gl_FragColor = vec4(color, alpha);
         //gl_FragColor = vec4(1.0, 1.0, 1.0, alpha);
       }
