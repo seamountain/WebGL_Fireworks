@@ -4,9 +4,9 @@ import "mvq.jsx/lib/mvq.jsx";
 
 class _Main {
   static function main(args : string[]) : void {
-    var element = dom.id("world") as HTMLCanvasElement;
+    var canvas = dom.id("world") as HTMLCanvasElement;
 
-    var gl = element.getContext("experimental-webgl") as WebGLRenderingContext;
+    var gl = canvas.getContext("experimental-webgl") as WebGLRenderingContext;
 
     var vs = gl.createShader(gl.VERTEX_SHADER);
     gl.shaderSource(vs, (dom.id("v-shader") as HTMLScriptElement).text); // called per vertex
@@ -66,21 +66,35 @@ class _Main {
     gl.vertexAttribPointer(texCoordLoc, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(texCoordLoc);
 
-    //大量の雪データ作成
+    //花火データ作成
     var weight = [0.1];
     var origPosition = [[0.5, 0.5, 0.5]];
-    var colors = [[1.0, 1.0, 1.0]];
+    var color = [1.0, 1.0, 1.0];
     var posX = 0.5 - Math.random() * 1.5;
     var posY = 0.5 - Math.random() * 1.5;
-    for (var i = 0; i < 30; i++) {
-      weight.push(0.5 - Math.random() * 2);
-      origPosition.push(
-          [posX, 0, 0, 0.01 * Math.random(), 0.01 * Math.random()]
-          );
+    //for (var i = 0; i < 30; i++) {
+      //weight.push(0.5 - Math.random() * 2);
+      //origPosition.push(
+          //[posX, 0, 0, 0.01 * Math.random(), 0.01 * Math.random()]
+          //);
+    //}
+
+    var positions = origPosition;
+    function createData() : void {
+      origPosition = [[0.5, 0.5, 0.5]];
+      color = [Math.random(), Math.random(), Math.random()];
+      posX = 0.5 - Math.random() * 1.5;
+      posY = 0.5 - Math.random() * 1.5;
+      for (var i = 0; i < 30; i++) {
+        //weight.push(0.5 - Math.random() * 2);
+        origPosition.push(
+          [posX, posY, 0, 0.01 * Math.random(), 0.01 * Math.random()]
+        );
+      }
+      positions = origPosition;
     }
 
     // update
-    var positions = origPosition;
     var UPDATE_FPS = 50;
     // 放物線を描かせたい
     var g = -0.025;
@@ -88,13 +102,23 @@ class _Main {
     // 関数自体をsetやclearするのではなく、
     // アップデート関数は回しっぱなしで、登録するデータを入れ替えて表示させる
     function update() : void {
-      Timer.setTimeout(update, 1000 / UPDATE_FPS);
+    //function update(f:number) : void {
+      var timeoutTimer = Timer.setTimeout(update, 1000 / UPDATE_FPS);
+      //var timeoutTimer = Timer.requestAnimationFrame(update);
+      var over = 0;
       dt++;
       for (var i = 0; i < positions.length; i++) {
         positions[i][3] = positions[i][3]; //vx
         positions[i][4] += g * dt / 10000; //vy
         positions[i][0] += positions[i][3];
         positions[i][1] += positions[i][4];
+        if (positions[i][1] < -1) {
+          over++;
+        }
+      }
+      if (over >= positions.length * 0.8) {
+        Timer.clearTimeout(timeoutTimer);
+        //Timer.cancelAnimationFrame(timeoutTimer);
       }
     }
 
@@ -123,10 +147,9 @@ class _Main {
     gl.uniform3fv(scaleLoc, new Float32Array([scale, scale, scale]));
 
     var colorLoc = gl.getUniformLocation(prog, 'color');
-    var color = [Math.random(), Math.random(), Math.random()];
 
     function render(f:number) : void {
-      Timer.requestAnimationFrame(render);
+      var timer = Timer.requestAnimationFrame(render);
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.enable(gl.BLEND);
       ////gl.enable(gl.DEPTH_TEST);
@@ -153,6 +176,7 @@ class _Main {
       //gl.vertexAttribPointer(0 [> attrib index <], 3, gl.FLOAT, false, 0, 0);
       //gl.enableVertexAttribArray(0);
 
+      var over = 0;
       for (var i = 0; i < positions.length; i++) {
         // 色
         gl.uniform3fv(colorLoc, color);
@@ -160,6 +184,13 @@ class _Main {
         gl.uniform3f(positionLoc, positions[i][0], positions[i][1], positions[i][2]);
         gl.uniform1f(alphaLoc, 0.95);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        if (positions[i][1] < -1) {
+          over++;
+        }
+        if (over >= positions.length * 0.8) {
+          Timer.cancelAnimationFrame(timer);
+        }
+        log positions[i];
       }
     }
 
@@ -167,7 +198,19 @@ class _Main {
     log "use native RAF: " + raf as string;
     Timer.useNativeRAF(raf);
 
-    update();
-    render(0);
+    //update();
+    //render(0);
+
+    canvas.addEventListener("click", (e) -> {
+      //weight = [0.1];
+      //origPosition = [[0.5, 0.5, 0.5]];
+      //posX = 0.5 - Math.random() * 1.5;
+      //posY = 0.5 - Math.random() * 1.5;
+      createData();
+      update();
+      render(0);
+      log "clicked";
+      log e;
+    });
   }
 }
