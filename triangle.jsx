@@ -4,9 +4,9 @@ import "mvq.jsx/lib/mvq.jsx";
 
 class _Main {
   static function main(args : string[]) : void {
-    var element = dom.id("world") as HTMLCanvasElement;
+    var canvas = dom.id("world") as HTMLCanvasElement;
 
-    var gl = element.getContext("experimental-webgl") as WebGLRenderingContext;
+    var gl = canvas.getContext("experimental-webgl") as WebGLRenderingContext;
 
     var vs = gl.createShader(gl.VERTEX_SHADER);
     gl.shaderSource(vs, (dom.id("v-shader") as HTMLScriptElement).text); // called per vertex
@@ -66,25 +66,27 @@ class _Main {
     gl.vertexAttribPointer(texCoordLoc, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(texCoordLoc);
 
-    //大量の雪データ作成
-    var weight = [0.1];
+    var weight = [] : Array.<number>;
     var origPosition = [[0.5, 0.5, 0.5]];
-    var colors = [[1.0, 1.0, 1.0]];
+    var colors = [] : Array.<number>;
     var posX = 0.5 - Math.random() * 1.5;
     var posY = 0.5 - Math.random() * 1.5;
-    for (var i = 0; i < 30; i++) {
-      weight.push(0.5 - Math.random() * 2);
-      origPosition.push(
-          [posX, 0, 0, 0.01 * Math.random(), 0.01 * Math.random()]
-          );
-    }
+
+    var dataNum = 30;
+    var positions = origPosition;
 
     // update
-    var positions = origPosition;
+    //var positions = origPosition;
     var UPDATE_FPS = 50;
     // 放物線を描かせたい
     var g = -0.025;
     var dt = 0;
+
+    function clearData() : void {
+      positions = [[0.5, 0.5, 0.5]];
+      dt = 0;
+    }
+
     // 関数自体をsetやclearするのではなく、
     // アップデート関数は回しっぱなしで、登録するデータを入れ替えて表示させる
     function update() : void {
@@ -141,18 +143,24 @@ class _Main {
       // ただの四角
       //gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       //var varray = new Float32Array([
-          //// (1)
-          //-1,  1,  1, // 左上の頂点 (x :  左右, y : 上下, z : 手前億) - 図を見ながら座標をうつとよい
-          //-1, -1,  1, // 左下の頂点
-          //1,  1,  1, // 以下略
-          //1, -1,  1
-          //]);
+      //// (1)
+      //-1,  1,  1, // 左上の頂点 (x :  左右, y : 上下, z : 手前億) - 図を見ながら座標をうつとよい
+      //-1, -1,  1, // 左下の頂点
+      //1,  1,  1, // 以下略
+      //1, -1,  1
+      //]);
       //var vbuf = gl.createBuffer();
       //gl.bindBuffer(gl.ARRAY_BUFFER, vbuf);
       //gl.bufferData(gl.ARRAY_BUFFER, varray, gl.STATIC_DRAW);
       //gl.vertexAttribPointer(0 [> attrib index <], 3, gl.FLOAT, false, 0, 0);
       //gl.enableVertexAttribArray(0);
 
+      if (positions.length < dataNum) {
+        log "returned!";
+        return;
+      }
+
+      var outSide = 0;
       for (var i = 0; i < positions.length; i++) {
         // 色
         gl.uniform3fv(colorLoc, color);
@@ -160,8 +168,49 @@ class _Main {
         gl.uniform3f(positionLoc, positions[i][0], positions[i][1], positions[i][2]);
         gl.uniform1f(alphaLoc, 0.95);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+        if (positions[i][1] < -1) {
+          outSide++;
+        }
+
+        // 最終的に複数の花火が出るようにする
+        if (outSide >= dataNum) {
+          clearData();
+          return;
+        }
       }
     }
+
+    // create data
+    function generateData() : void {
+      clearData();
+      color = [Math.random(), Math.random(), Math.random()];
+      for (var i = 0; i < dataNum; i++) {
+        weight.push(0.5 - Math.random() * 2);
+        positions.push(
+            [posX, 0, 0, 0.01 * Math.random(), 0.01 * Math.random()]
+            );
+      }
+    }
+
+    canvas.addEventListener("click", (e) -> {
+      var mouseEvent = e as MouseEvent;
+      var targetElement= e.target as Element;
+      //posX = (mouseEvent.offsetX - (targetElement.clientWidth / 2)) / targetElement.clientWidth;
+      posX = mouseEvent.offsetX / targetElement.clientWidth;
+      if (posX < 0.5) {
+        //posX *= -1;
+        posX += -1;
+      }
+      //posX = -1;
+      log mouseEvent.offsetX;
+      log targetElement.clientWidth;
+      log mouseEvent.offsetX / targetElement.clientWidth;
+      log posX;
+      generateData();
+      log "clicked";
+      log e;
+    });
 
     var raf = (dom.window.location.hash == "#raf");
     log "use native RAF: " + raf as string;
