@@ -188,7 +188,7 @@ class _Main {
       for (var i = 0; i < dataNum; i++) {
         weight.push(0.5 - Math.random() * 2);
         positions.push(
-            [posX, 0, 0, 0.01 * Math.random(), 0.01 * Math.random()]
+            [posX, posY, 0, 0.01 * Math.random(), 0.01 * Math.random()]
             );
       }
     }
@@ -196,17 +196,11 @@ class _Main {
     canvas.addEventListener("click", (e) -> {
       var mouseEvent = e as MouseEvent;
       var targetElement= e.target as Element;
-      //posX = (mouseEvent.offsetX - (targetElement.clientWidth / 2)) / targetElement.clientWidth;
-      posX = mouseEvent.offsetX / targetElement.clientWidth;
-      if (posX < 0.5) {
-        //posX *= -1;
-        posX += -1;
-      }
-      //posX = -1;
-      log mouseEvent.offsetX;
-      log targetElement.clientWidth;
-      log mouseEvent.offsetX / targetElement.clientWidth;
-      log posX;
+      posX = -1 + 2 * (mouseEvent.offsetX / targetElement.clientWidth);
+      posY = 1 - 2 * (mouseEvent.offsetY / targetElement.clientHeight);
+      log mouseEvent.offsetY;
+      log targetElement.clientHeight;
+      log mouseEvent.offsetY / targetElement.clientHeight;
       generateData();
       log "clicked";
       log e;
