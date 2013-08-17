@@ -67,8 +67,8 @@ class _Main {
     gl.enableVertexAttribArray(texCoordLoc);
 
     var weight = [] : Array.<number>;
-    var origPosition = [[0.5, 0.5, 0.5]];
-    var colors = [] : Array.<number>;
+    var origPosition = [[0.0, 0.0, 0.0, 0.5, 0.5]];
+    var colors = [[1.0, 1.0, 1.0]];
     var posX = 0.5 - Math.random() * 1.5;
     var posY = 0.5 - Math.random() * 1.5;
 
@@ -83,8 +83,8 @@ class _Main {
     var dt = 0;
 
     function clearData() : void {
-      positions = [[0.5, 0.5, 0.5]];
-      dt = 0;
+      positions.splice(0, dataNum);
+      colors.splice(0, dataNum);
     }
 
     // 関数自体をsetやclearするのではなく、
@@ -163,7 +163,7 @@ class _Main {
       var outSide = 0;
       for (var i = 0; i < positions.length; i++) {
         // 色
-        gl.uniform3fv(colorLoc, color);
+        gl.uniform3fv(colorLoc, colors[i]);
         // 位置
         gl.uniform3f(positionLoc, positions[i][0], positions[i][1], positions[i][2]);
         gl.uniform1f(alphaLoc, 0.95);
@@ -183,13 +183,14 @@ class _Main {
 
     // create data
     function generateData() : void {
-      clearData();
+      dt = 0;
       color = [Math.random(), Math.random(), Math.random()];
       for (var i = 0; i < dataNum; i++) {
         weight.push(0.5 - Math.random() * 2);
         positions.push(
             [posX, posY, 0, 0.01 * Math.random(), 0.01 * Math.random()]
             );
+        colors.push(color);
       }
     }
 
@@ -198,11 +199,7 @@ class _Main {
       var targetElement= e.target as Element;
       posX = -1 + 2 * (mouseEvent.offsetX / targetElement.clientWidth);
       posY = 1 - 2 * (mouseEvent.offsetY / targetElement.clientHeight);
-      log mouseEvent.offsetY;
-      log targetElement.clientHeight;
-      log mouseEvent.offsetY / targetElement.clientHeight;
       generateData();
-      log "clicked";
       log e;
     });
 
