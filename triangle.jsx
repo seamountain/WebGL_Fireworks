@@ -78,7 +78,6 @@ class _Main {
     // update
     //var positions = origPosition;
     var UPDATE_FPS = 50;
-    // 放物線を描かせたい
     var g = -0.025;
     var dt = 0;
 
@@ -118,7 +117,7 @@ class _Main {
       //こっち使う時は注意！レベル1以外のレベルののtextureが使われると、表示されない！
       //gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     });
-    img.src = 'snow.png';
+    img.src = 'circle.png';
 
     var scaleLoc = gl.getUniformLocation(prog, 'scale');
     var scale = 1.0;
