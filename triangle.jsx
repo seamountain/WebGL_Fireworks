@@ -67,12 +67,12 @@ class _Main {
     gl.enableVertexAttribArray(texCoordLoc);
 
     var weight = [] : Array.<number>;
-    var origPosition = [[0.0, 0.0, 0.0, 0.5, 0.5]];
-    var colors = [[1.0, 1.0, 1.0]];
+    var origPosition= [] : Array.<Array.<number>>;
+    var colors = [] : Array.<Array.<number>>;
     var posX = 0.5 - Math.random() * 1.5;
     var posY = 0.5 - Math.random() * 1.5;
 
-    var dataNum = 30;
+    var dataNum = 100;
     var positions = origPosition;
 
     // update
@@ -130,29 +130,10 @@ class _Main {
       Timer.requestAnimationFrame(render);
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.enable(gl.BLEND);
-      ////gl.enable(gl.DEPTH_TEST);
-      gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE);
+      gl.blendFuncSeparate(gl.SRC_ALPHA, gl.ONE, gl.ONE, gl.ONE);
 
-      ////雪
-      scale = 0.01;
-      //scale = 1;
       gl.uniform3fv(scaleLoc, new Float32Array([scale, scale, scale]));
       gl.bindTexture(gl.TEXTURE_2D, texture);
-
-      // ただの四角
-      //gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-      //var varray = new Float32Array([
-      //// (1)
-      //-1,  1,  1, // 左上の頂点 (x :  左右, y : 上下, z : 手前億) - 図を見ながら座標をうつとよい
-      //-1, -1,  1, // 左下の頂点
-      //1,  1,  1, // 以下略
-      //1, -1,  1
-      //]);
-      //var vbuf = gl.createBuffer();
-      //gl.bindBuffer(gl.ARRAY_BUFFER, vbuf);
-      //gl.bufferData(gl.ARRAY_BUFFER, varray, gl.STATIC_DRAW);
-      //gl.vertexAttribPointer(0 [> attrib index <], 3, gl.FLOAT, false, 0, 0);
-      //gl.enableVertexAttribArray(0);
 
       if (positions.length < dataNum) {
         log "returned!";
@@ -186,8 +167,15 @@ class _Main {
       color = [Math.random(), Math.random(), Math.random()];
       for (var i = 0; i < dataNum; i++) {
         weight.push(0.5 - Math.random() * 2);
+        var vx0 = 0.01 - 0.02 * Math.random();
+        var vy0 = 0.01 - 0.02 * Math.random();
+        // 三平方の定理
+        while (vx0 * vx0 + vy0 * vy0 > 0.01 * 0.01) {
+          vx0 = 0.01 - 0.02 * Math.random();
+          vy0 = 0.01 - 0.02 * Math.random();
+        }
         positions.push(
-            [posX, posY, 0, 0.01 * Math.random(), 0.01 * Math.random()]
+            [posX, posY, 0, vx0, vy0]
             );
         colors.push(color);
       }
