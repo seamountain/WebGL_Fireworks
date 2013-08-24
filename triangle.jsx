@@ -69,10 +69,11 @@ class _Main {
     var weight = [] : Array.<number>;
     var origPosition= [] : Array.<Array.<number>>;
     var colors = [] : Array.<Array.<number>>;
+    var alphas = [] : Array.<number>;
     var posX = 0.5 - Math.random() * 1.5;
     var posY = 0.5 - Math.random() * 1.5;
 
-    var dataNum = 100;
+    var dataNum = 150;
     var positions = origPosition;
 
     // update
@@ -84,6 +85,7 @@ class _Main {
     function clearData() : void {
       positions.splice(0, dataNum);
       colors.splice(0, dataNum);
+      alphas.splice(0, dataNum);
     }
 
     // RGB -> 255, 255, 255
@@ -115,10 +117,11 @@ class _Main {
       Timer.setTimeout(update, 1000 / UPDATE_FPS);
       dt++;
       for (var i = 0; i < positions.length; i++) {
-        positions[i][3] = positions[i][3]; //vx
-        positions[i][4] += g * dt / 10000; //vy
-        positions[i][0] += positions[i][3];
-        positions[i][1] += positions[i][4];
+        positions[i][3] = positions[i][3]; // vx
+        positions[i][4] += g * dt / 10000; // vy
+        positions[i][0] += positions[i][3]; // x
+        positions[i][1] += positions[i][4]; // y
+        alphas[i] -= 0.005;
       }
     }
 
@@ -143,7 +146,7 @@ class _Main {
     img.src = 'circle.png';
 
     var scaleLoc = gl.getUniformLocation(prog, 'scale');
-    var scale = 0.01;
+    var scale = 0.005;
     gl.uniform3fv(scaleLoc, new Float32Array([scale, scale, scale]));
 
     var colorLoc = gl.getUniformLocation(prog, 'color');
@@ -168,7 +171,8 @@ class _Main {
         gl.uniform3fv(colorLoc, colors[i]);
         // 位置
         gl.uniform3f(positionLoc, positions[i][0], positions[i][1], positions[i][2]);
-        gl.uniform1f(alphaLoc, 0.95);
+        //gl.uniform1f(alphaLoc, 0.95);
+        gl.uniform1f(alphaLoc, alphas[i]);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
         if (positions[i][1] < -1) {
@@ -185,6 +189,7 @@ class _Main {
 
     // create data
     var color = [] : Array.<number>;
+    var alpha = 1.0;
     function generateData() : void {
       dt = 0;
       color = HSVtoRGB(Math.random(), 1.0, 1.0);
@@ -201,6 +206,7 @@ class _Main {
             [posX, posY, 0, vx0, vy0]
             );
         colors.push(color);
+        alphas.push(alpha);
       }
     }
 
