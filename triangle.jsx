@@ -120,7 +120,7 @@ class _Main {
     img.src = 'circle.png';
 
     var scaleLoc = gl.getUniformLocation(prog, 'scale');
-    var scale = 1.0;
+    var scale = 0.01;
     gl.uniform3fv(scaleLoc, new Float32Array([scale, scale, scale]));
 
     var colorLoc = gl.getUniformLocation(prog, 'color');

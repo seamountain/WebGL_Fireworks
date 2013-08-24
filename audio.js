@@ -11,20 +11,19 @@ function init() {
 
 var fireSound;
 function startSound() {
-    var startTime = context.currentTime + 0.100;
-    fireSound = playSound(bufferLoader.bufferList[0],startTime);
+    var startTime = context.currentTime + 0.05;
+    var endTime = startTime + 5.0;
+    fireSound = playSound(bufferLoader.bufferList[0], startTime, endTime);
 }
 
-function stopSound() {
-    fireSound.noteOff(0);
-}
-
-function playSound(buffer,time) {
+function playSound(buffer,startTime, endTime) {
     var source = context.createBufferSource();
     source.buffer = buffer;
     source.loop = true;
     source.connect(context.destination);
-    source.noteOn(time);
+    source.noteOn(startTime);
+    source.noteOff(endTime);
     return source;
 }
+
 window.onclick = startSound;
