@@ -111,14 +111,15 @@ class _Main {
       return [r, g, b];
     }
 
+    var A = 0.0001;
     // 関数自体をsetやclearするのではなく、
     // アップデート関数は回しっぱなしで、登録するデータを入れ替えて表示させる
     function update() : void {
       Timer.setTimeout(update, 1000 / UPDATE_FPS);
       dt++;
       for (var i = 0; i < positions.length; i++) {
-        positions[i][3] = positions[i][3]; // vx
-        positions[i][4] += g * dt / 10000; // vy
+        positions[i][3] += 0 - A * positions[i][3] * dt; // vx
+        positions[i][4] += (0.0003 * g * dt) - (A * positions[i][4] * dt); // vy
         positions[i][0] += positions[i][3]; // x
         positions[i][1] += positions[i][4]; // y
         alphas[i] -= 0.005;
@@ -161,7 +162,7 @@ class _Main {
       gl.bindTexture(gl.TEXTURE_2D, texture);
 
       if (positions.length < dataNum) {
-        log "returned!";
+        log "There are no position data";
         return;
       }
 
