@@ -73,7 +73,7 @@ class _Main {
     var posX = 0.5 - Math.random() * 1.5;
     var posY = 0.5 - Math.random() * 1.5;
 
-    var dataNum = 150;
+    var dataNum = 300;
     var positions = origPosition;
 
     // update
@@ -147,7 +147,7 @@ class _Main {
     img.src = 'circle.png';
 
     var scaleLoc = gl.getUniformLocation(prog, 'scale');
-    var scale = 0.005;
+    var scale = 0.004;
     gl.uniform3fv(scaleLoc, new Float32Array([scale, scale, scale]));
 
     var colorLoc = gl.getUniformLocation(prog, 'color');
@@ -193,7 +193,7 @@ class _Main {
     var alpha = 1.0;
     function generateData() : void {
       dt = 0;
-      color = HSVtoRGB(Math.random(), 1.0, 1.0);
+      color = HSVtoRGB(Math.random(), 0.8, 1.0);
       for (var i = 0; i < dataNum; i++) {
         weight.push(0.5 - Math.random() * 2);
         var vx0 = 0.01 - 0.02 * Math.random();
