@@ -73,7 +73,7 @@ class _Main {
     var posX = 0.5 - Math.random() * 1.5;
     var posY = 0.5 - Math.random() * 1.5;
 
-    var dataNum = 300;
+    var dataNum = 400;
     var positions = origPosition;
 
     // update
@@ -122,7 +122,7 @@ class _Main {
         positions[i][4] += (0.0003 * g * dt) - (A * positions[i][4] * dt); // vy
         positions[i][0] += positions[i][3]; // x
         positions[i][1] += positions[i][4]; // y
-        alphas[i] -= 0.005;
+        alphas[i] -= 0.006;
       }
     }
 
@@ -193,7 +193,7 @@ class _Main {
     var alpha = 1.0;
     function generateData() : void {
       dt = 0;
-      color = HSVtoRGB(Math.random(), 0.8, 1.0);
+      color = HSVtoRGB(Math.random(), 0.7, 1.0);
       for (var i = 0; i < dataNum; i++) {
         weight.push(0.5 - Math.random() * 2);
         var vx0 = 0.01 - 0.02 * Math.random();

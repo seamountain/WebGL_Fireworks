@@ -11,7 +11,7 @@ function init() {
 
 var fireSound;
 function startSound() {
-    var startTime = context.currentTime + 0.05;
+    var startTime = context.currentTime + 0.8;
     var endTime = startTime + 5.0;
     fireSound = playSound(bufferLoader.bufferList[0], startTime, endTime);
 }
